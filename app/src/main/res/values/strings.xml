@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">SpamDeck</string>
+    <string name="connectionErrorHTML">Impossible connection</string>
+    <string name="twitchUnjoinableHTML">Impossible to join the Twitch servers, check your connection and restart app</string>
+    <string name="unmapped">Unmapped</string>
+    <string name="connect">Connect</string>
+    <string name="save">Save</string>
+    <string name="channelname">Channel name</string>
+    <string name="name">Name</string>
+    <string name="message">Message</string>
+    <string name="buttonname">Button name</string>
+    <string name="messagewithexplainations">Message (the one which will be send to twitch)</string>
+</resources>
