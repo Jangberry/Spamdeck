@@ -18,6 +18,7 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.ArrayList;
 
 public class SocketService extends Service {
     private final IBinder mBinder = new LocalBinder();
@@ -27,10 +28,11 @@ public class SocketService extends Service {
     PrintWriter out;
     String username;
     String channel;
+    Boolean spam = false;
+    ArrayList sendQueue = new ArrayList();
 
     public SocketService() {
     }
-
 
     protected void setChannel(String incoming) {
         channel = incoming;
@@ -45,11 +47,28 @@ public class SocketService extends Service {
         return mBinder;
     }
 
-    public void send(String message) {
-        if (socket.isConnected()) {
-            new SendThread("PRIVMSG #" + channel + " :" + message+"\r\n").start();
+    public void send(String message, Boolean spamable) {
+        if (spamable && spam) {
+            sendQueue.add("PRIVMSG #" + channel + " :" + message.substring(0, message.lastIndexOf(" ")) + "\r\n");
         } else {
-            Log.e("Send", "Trying to send " + message + " while socket isn't connected");
+            sendQueue.add("PRIVMSG #" + channel + " :" + message + "\r\n");
+        }
+        spam = !spam;
+    }
+
+    class SendQueueTreatment extends Thread {
+        public void run() {
+            while (socket.isConnected()) {
+                try {
+                    if (!sendQueue.isEmpty()) {
+                        new SendThread(sendQueue.get(0).toString()).start();
+                        sendQueue.remove(0);
+                        sleep(1000);
+                    } else {
+                        sleep(50);
+                    }
+                } catch (InterruptedException e) {}
+            }
         }
     }
 
@@ -64,12 +83,6 @@ public class SocketService extends Service {
                                                                                                     This is channel name
          */
     }
-
-    /*
-     *   Usage
-     *
-     *   new SendThread(String).start();
-     */
 
     public void socketConnect(String token) {
         new ConnectThread(token).start();
@@ -95,25 +108,28 @@ public class SocketService extends Service {
     }
 
     class SendThread extends Thread {
+        /*
+         *   Usage
+         *
+         *   new SendThread(String).start();
+         */
         String message;
-
         SendThread(String message) {
             this.message = message;
         }
-
         public void run() {
             out.println(message);
             Log.v("SendThread", "Sent>" + message);
         }
     }
 
-    /*
-     *  Usage:
-     *
-     *  Just launch the thread : there is an infinity loop that receive messages, and call
-     *  the onRecv
-     */
     class RecvThread extends Thread {
+        /*
+         *  Usage:
+         *
+         *  Just launch the thread : there is an infinity loop that receive messages, and call
+         *  the onRecv
+         */
         public void run() {
             Boolean keepReceiving = true;
             while (keepReceiving) {
@@ -147,6 +163,29 @@ public class SocketService extends Service {
                     Log.wtf("Receving", "Thread", e);
                 }
             }
+        }
+    }
+
+    public void newChannel(String channel) {
+        logged = false;
+        new NewChannel(channel).start();
+    }
+
+    public class NewChannel extends Thread {
+        String newChannel;
+
+        NewChannel(String newChannel) {
+            this.newChannel = newChannel;
+        }
+
+        public void run() {
+            if (!newChannel.equals(channel)) {
+                sendQueue.clear();
+                out.println("PART #" + channel);
+                channel = newChannel;
+                out.println("JOIN #" + newChannel);
+            }
+            logged = true;
         }
     }
 
@@ -185,11 +224,9 @@ public class SocketService extends Service {
                                                 //Log.v("HTTP", "Success :" + jsonResults.toString());  // Commented because of security issues
                                                 try {
                                                     setUsername(jsonResults.getJSONObject("token")
-                                                                    .get("user_name")
-                                                                    .toString());
-                                                } catch (org.json.JSONException e) {
-
-                                                }
+                                                            .get("user_name")
+                                                            .toString());
+                                                } catch (org.json.JSONException e) {}
                                             } else {
                                                 Log.e("HTTP", "error");
                                             }
@@ -210,7 +247,8 @@ public class SocketService extends Service {
                     logged = true;
                     Log.i("SocketService",
                             "Now logged with username " + username +
-                            " to channel " + channel);
+                                    " to channel " + channel);
+                    new SendQueueTreatment().start();
 
                 } catch (IOException e) {
                     Log.e("e", "IOErreur", e);

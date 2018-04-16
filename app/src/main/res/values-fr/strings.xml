@@ -6,9 +6,17 @@
     <string name="unmapped">Non-mappé</string>
     <string name="connect">Se connecter</string>
     <string name="save">Sauvegarder</string>
-    <string name="channelname">Nom de la chaine</string>
+    <string name="channelname">Nom de la chaine à laquelle se connecter</string>
     <string name="name">Nom</string>
     <string name="message">Message</string>
     <string name="buttonname">Nom du bouton</string>
     <string name="messagewithexplainations">Message (celui qui sera envoyé à Twitch)</string>
+    <string name="errorchannelvoid">Veuillez entrer un nom de chaine</string>
+    <string name="forspam">Pour spam\n(le dernier mot sera supprimé une fois sur deux)</string>
+    <string name="About">A propos</string>
+    <string name="title_activity_about_tab">Onlget à propos</string>
+    <string name="SocialMedia">Medias sociaux</string>
+    <string name="chosenewchannel">Chose an other channel</string>
+    <string name="legal">Legal</string>
+    <string name="legalcontent">Icones :\nmaterial.io\nwww.flaticon.com/authors/pixel-perfect\nEt qui sait, peut-etre bientot Twitch...\n\nLibrairies:\ngithub.com/studioidan/HttpAgent</string>
 </resources>

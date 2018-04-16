@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context="fr.jangberry.spamdeck.MainActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_channel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:elevation="2dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <WebView
         android:id="@+id/Login"
         android:layout_width="0dp"
@@ -13,5 +25,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_channel">
+
+    </WebView>
 </android.support.constraint.ConstraintLayout>

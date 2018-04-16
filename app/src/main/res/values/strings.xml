@@ -5,9 +5,18 @@
     <string name="unmapped">Unmapped</string>
     <string name="connect">Connect</string>
     <string name="save">Save</string>
-    <string name="channelname">Channel name</string>
+    <string name="channelname">Name of the channel to join</string>
     <string name="name">Name</string>
     <string name="message">Message</string>
     <string name="buttonname">Button name</string>
     <string name="messagewithexplainations">Message (the one which will be send to twitch)</string>
+    <string name="errorchannelvoid">Please enter a channel name</string>
+    <string name="forspam">For spam\n(will delete last word half the time)</string>
+    <string name="title_activity_about_tab">AboutTab</string>
+    <string name="About">About</string>
+    <string name="ethaddr" translatable="false">0x55dF1Ea2933AEb271fFae56AE8f464A5AC23a3b1</string>
+    <string name="SocialMedia">Socials medias</string>
+    <string name="chosenewchannel">Chose an other channel</string>
+    <string name="legal">Legal</string>
+    <string name="legalcontent">Icons :\nmaterial.io\nwww.flaticon.com/authors/pixel-perfect\nAnd who knows, maybe soon Twitch...\n\nLibraries:\ngithub.com/studioidan/HttpAgent</string>
 </resources>

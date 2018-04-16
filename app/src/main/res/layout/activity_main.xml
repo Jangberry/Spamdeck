@@ -4,20 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fr.jangberry.spamdeck.MainActivity"
-    android:animateLayoutChanges="true">
+    tools:context="fr.jangberry.spamdeck.MainActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/buttons"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:keepScreenOn="true"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_main">
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline2"
@@ -771,10 +780,11 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:onClick="onButtonSaveChanges"
-            android:text="@string/save"
+            android:text="@android:string/ok"
             app:layout_constraintEnd_toEndOf="@+id/text_newcommandmessage"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="@+id/text_newcommandmessage"
-            app:layout_constraintTop_toBottomOf="@+id/text_newcommandmessage" />
+            app:layout_constraintTop_toBottomOf="@+id/switchspam" />
 
         <EditText
             android:id="@+id/text_newcommandmessage"
@@ -826,6 +836,21 @@
             android:text="@string/message"
             app:layout_constraintBottom_toTopOf="@+id/text_newcommandmessage"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <Switch
+            android:id="@+id/switchspam"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:elevation="4dp"
+            android:text="@string/forspam"
+            android:textAlignment="textEnd"
+            android:textAllCaps="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_newcommandmessage" />
 
     </android.support.constraint.ConstraintLayout>
 
