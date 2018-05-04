@@ -22,6 +22,13 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 
 public class MainActivity extends AppCompatActivity {
     protected static final String clientID = "6ndb4f2gou52g7zdmk32e89m4gk4iq";
@@ -39,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
                         */
     private SharedPreferences savedLayout;
     private SocketService socketservice;
+    private InterstitialAd bigad;
+    private AdView adview;
 
     protected ServiceConnection serviceconnection = new ServiceConnection() {
 
@@ -138,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
                     setSupportActionBar(toolbar);
                     setTitle(R.string.app_name);
                     socketservice.socketConnect(token);
-                    new ChangeViewChecker().start();
                 }
                 super.onPageFinished(view, url);
             }
@@ -159,6 +167,45 @@ public class MainActivity extends AppCompatActivity {
                     view.loadDataWithBaseURL(
                             null, htmlData, "text/html", "UTF-8", null);
                     view.invalidate();
+                }
+            }
+        });
+        MobileAds.initialize(MainActivity.this, "ca-app-pub-2767919419358345~6397374931");
+        bigad = new InterstitialAd(this);
+        bigad.setAdUnitId("ca-app-pub-2767919419358345/7371545250");
+        AdRequest.Builder bigadrequest = new AdRequest.Builder();
+        if (BuildConfig.DEBUG) {
+            bigadrequest.addTestDevice("3D0266CF596BA090B74E9D85DE74822E");
+            Log.i("Debug", "Screening ad");
+        }
+        bigad.loadAd(bigadrequest.build());
+        bigad.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                AdRequest.Builder bigadrequest = new AdRequest.Builder();
+                if (BuildConfig.DEBUG) {
+                    bigadrequest.addTestDevice("3D0266CF596BA090B74E9D85DE74822E");
+                    Log.i("Debug", "Screening ad");
+                }
+                bigad.loadAd(bigadrequest.build());
+            }
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                if(BuildConfig.DEBUG){
+                    Log.i("Big ad", "failed loading error code:"+errorCode);
+                }
+            }
+            @Override
+            public void onAdOpened() {
+                Toast.makeText(MainActivity.this, getString(R.string.bigadthank), Toast.LENGTH_LONG).show();
+                if(BuildConfig.DEBUG){
+                    Log.i("Big ad", "opened");
+                }
+            }
+            @Override
+            public void onAdLoaded() {
+                if(BuildConfig.DEBUG){
+                    Log.i("Big ad", "loaded");
                 }
             }
         });
@@ -249,6 +296,7 @@ public class MainActivity extends AppCompatActivity {
             editor.apply();
         }
         findViewById(R.id.buttonsmodifier).setVisibility(View.GONE);
+
     }
 
     protected void onDestroy() {
@@ -306,8 +354,42 @@ public class MainActivity extends AppCompatActivity {
                     Toolbar toolbar = findViewById(R.id.toolbar_main);
                     setSupportActionBar(toolbar);
                     setTitle(R.string.app_name);
+                    adview = findViewById(R.id.adView);
+                    AdRequest.Builder adRequest = new AdRequest.Builder();
+                    if (BuildConfig.DEBUG) {
+                        adRequest.addTestDevice("3D0266CF596BA090B74E9D85DE74822E");
+                        Log.i("Debug", "Screening ad");
+                    }
+                    adview.loadAd(adRequest.build());
+                    adview.setAdListener(new AdListener(){
+                        @Override
+                        public void onAdClicked() {
+                            Toast.makeText(MainActivity.this, getString(R.string.bigadthank), Toast.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void onAdFailedToLoad(int i) {
+                            if(BuildConfig.DEBUG){
+                                Log.w("little ad", "error : "+i);
+                            }
+                        }
+                    });
                 }
             });
+        }
+    }
+
+    public void onBigAdShow(View view) {
+         if (bigad.isLoaded()) {
+            bigad.show();
+        } else {
+            Log.d("TAG", "The interstitial wasn't loaded yet.");
+            AdRequest.Builder bigadrequest = new AdRequest.Builder();
+             if (BuildConfig.DEBUG) {
+                 bigadrequest.addTestDevice("3D0266CF596BA090B74E9D85DE74822E");
+                 Log.i("Debug", "Screening ad");
+             }
+             bigad.loadAd(bigadrequest.build());
         }
     }
 }

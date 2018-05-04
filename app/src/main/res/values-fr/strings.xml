@@ -18,5 +18,21 @@
     <string name="SocialMedia">Medias sociaux</string>
     <string name="chosenewchannel">Chose an other channel</string>
     <string name="legal">Legal</string>
-    <string name="legalcontent">Icones :\nmaterial.io\nwww.flaticon.com/authors/pixel-perfect\nEt qui sait, peut-etre bientot Twitch...\n\nLibrairies:\ngithub.com/studioidan/HttpAgent</string>
+    <string name="legalcontent">Icones :\nmaterial.io\nwww.flaticon.com/authors/pixel-perfect\n\nLibrairies:\ngithub.com/studioidan/HttpAgent\n\nLicences:\nTous les icones/logos/marques
+        appartiennent à leurs propriétaires respectifs, même s\'ils ne sont pas mentionnés en dessous\n
+        Les logo Twitch, la marque Twitch, \"Glitch\", et toutes les autres ressources qui rentrent dans la propriétée intellectuelle de Twitch, sont propriétée de Twitch.tv, service possédé par Amazon.com, Inc.\n
+        Le logo YouTube, la marque Youtube, et toutes les autres ressources qui rentrent dans la propriétée intellectuelle Youtube, sont propriétée de Youtube, LLC. possedée par Alphabet Inc. (Google)\n
+        Octocat (Le logo Github), la marque Github, et toutes les autres ressources qui rentrent dans la propriétée intellectuelle Github, sont propriétée de GitHub, Inc.\n
+        La marque PayPal, et toutes les autres ressources qui rentrent dans la propriétée intellectuelle de PayPal, sont propriétée de PayPal Holdings, Inc.\n\n
+
+        (S\'il y a un probleme avec ce qui est ecrit ci-dessus (ex: nom d\'une entreprise mal
+        orthographié; quelque-chose qui appartient a vous ou a votre entreprise, qui apparaît dans
+        le code source ou dans l\'application sans que la propriété ne soit mentionné ci-dessus;
+        nom, marque ou logo qui n\'apparait pas comme vous ou votre entreprise le souhaite (comme
+        (tm) ou © manquant); mauvaise attribution de certaines ressources; ou tout autre probleme
+        légal) s\'il vous plaît contactez moi via mon adresse mail renseignée sur Github ou la page
+        Play store de l\'application, avant d\'engager une procedure, pour que je puisse rêgler ce
+        probleme, je suis un débutant dans la publication d\'applications ou les problematiques
+        légales en général, donc c\'est certainement pas parfait… désolé)\n</string>
+    <string name="bigadthank">Merci, ça m\'aide sur la voie de £a rich€$$€</string>
 </resources>

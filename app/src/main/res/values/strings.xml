@@ -18,5 +18,18 @@
     <string name="SocialMedia">Socials medias</string>
     <string name="chosenewchannel">Chose an other channel</string>
     <string name="legal">Legal</string>
-    <string name="legalcontent">Icons :\nmaterial.io\nwww.flaticon.com/authors/pixel-perfect\nAnd who knows, maybe soon Twitch...\n\nLibraries:\ngithub.com/studioidan/HttpAgent</string>
+    <string name="legalcontent">Icons :\nmaterial.io\nwww.flaticon.com/authors/pixel-perfect\n\nLibraries:\ngithub.com/studioidan/HttpAgent\n\nLicences :\nAll icons/logos/trademark
+        own to their respective owners, even if they aren\'t mentioned bellow\n
+        Twitch logo, Twitch trademark, \"Glitch\", and all other resources that fit in intellectual property of Twitch, are property of Twitch.tv, service owned by Amazon.com, Inc.\n
+        YouTube logo, trademark, and all other resources that fit in intellectual property of Youtube, are property of YouTube, LLC. owned by Alphabet Inc. (Google)\n
+        Octocat (Github logo), and all other resources that fit in intellectual property of Github, are property of GitHub, Inc.\n
+
+        (If there is any issue with what\'s wrote above (ex: company name misspelled; something
+        that\'s in your property or your organisation property, appear in app or in the source code
+        but not above; name or logo that doesn\'t appear like you want (like (tm) or © missing); bad
+        attributions of some resources; or any other kind of legal issue) please contact me thought
+        my email address given on Github or on the Play store page of the app, before engage
+        procedures, so I can fix this issue, I\'m a beginner with publishing apps or legal issues in
+        general so it\'s certainly not perfect… sorry)</string>
+    <string name="bigadthank">Thank you, it helps me a bit on the road of the be£t mon€y wor£d</string>
 </resources>
