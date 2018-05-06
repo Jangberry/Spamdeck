@@ -10,6 +10,13 @@ I name the versions of the app form names of streamers that I like. I try to sor
 
 ## Change logs
 
+### V1.2.1
+- fix autoscroll with ad (it became a bit more visible, so I'll put a switch to unactivate ad in next update ;) )
+
+### V1.2 - SushiSauvage
+- Legal  update
+- Added ad
+
 ### V1.1 - SushiSauvage
 - Some bug fixed
 - You can now change channel without reset the app
