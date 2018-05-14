@@ -36,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String apiScopes = "chat_login";
     String channel;
     String token;
-    Boolean changingChannel = false;
+    boolean changingChannel = false;
+    boolean ads;
     int buttonChangingId;
     int currentView;    /*
                         0 = login (webview)
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private SocketService socketservice;
     private InterstitialAd bigad;
     private AdView adview;
+    private SharedPreferences sharedPreferences;
 
     protected ServiceConnection serviceconnection = new ServiceConnection() {
 
@@ -120,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 serviceconnection,
                 Context.BIND_AUTO_CREATE);
         savedLayout = this.getSharedPreferences(savedLayout_Location, MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences("fr.jangberry.spamdeck", MODE_PRIVATE);
         setContentView(R.layout.activity_main_login);
         currentView = 0;
         setTitle(R.string.app_name);
@@ -147,6 +150,8 @@ public class MainActivity extends AppCompatActivity {
                     setSupportActionBar(toolbar);
                     setTitle(R.string.app_name);
                     socketservice.socketConnect(token);
+                    Switch switchads = findViewById(R.id.switchads);
+                    switchads.setChecked(sharedPreferences.getBoolean("ads", false));
                 }
                 super.onPageFinished(view, url);
             }
@@ -170,9 +175,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        MobileAds.initialize(MainActivity.this, "ca-app-pub-2767919419358345~6397374931");
+        MobileAds.initialize(MainActivity.this, "ca-app-pub-5985669867488339~2706804686");
         bigad = new InterstitialAd(this);
-        bigad.setAdUnitId("ca-app-pub-2767919419358345/7371545250");
+        bigad.setAdUnitId("ca-app-pub-5985669867488339/1908728330");
         AdRequest.Builder bigadrequest = new AdRequest.Builder();
         if (BuildConfig.DEBUG) {
             bigadrequest.addTestDevice("3D0266CF596BA090B74E9D85DE74822E");
@@ -212,10 +217,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onChannelChosen(View view) {
-        /*if(channel.equals("custom")){*/
         EditText channelField = findViewById(R.id.channelField);
         channel = channelField.getText().toString();
-        //}
         if (!channel.equals("")) {
             if (!changingChannel) {
                 socketservice.setChannel(channel);
@@ -307,6 +310,11 @@ public class MainActivity extends AppCompatActivity {
     class ChangeViewChecker extends Thread {
         @Override
         public void run() {
+            Switch switchads = findViewById(R.id.switchads);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("ads", switchads.isChecked());
+            editor.apply();
+            ads = switchads.isChecked();
             while (!checkLogged()) {
                 try {
                     sleep(100);
@@ -354,26 +362,30 @@ public class MainActivity extends AppCompatActivity {
                     Toolbar toolbar = findViewById(R.id.toolbar_main);
                     setSupportActionBar(toolbar);
                     setTitle(R.string.app_name);
-                    adview = findViewById(R.id.adView);
-                    AdRequest.Builder adRequest = new AdRequest.Builder();
-                    if (BuildConfig.DEBUG) {
-                        adRequest.addTestDevice("3D0266CF596BA090B74E9D85DE74822E");
-                        Log.i("Debug", "Screening ad");
-                    }
-                    adview.loadAd(adRequest.build());
-                    adview.setAdListener(new AdListener(){
-                        @Override
-                        public void onAdClicked() {
-                            Toast.makeText(MainActivity.this, getString(R.string.bigadthank), Toast.LENGTH_LONG).show();
+                    if (ads) {
+                        adview = findViewById(R.id.adView);
+                        AdRequest.Builder adRequest = new AdRequest.Builder();
+                        if (BuildConfig.DEBUG) {
+                            adRequest.addTestDevice("3D0266CF596BA090B74E9D85DE74822E");
+                            Log.i("Debug", "Screening ad");
                         }
-
-                        @Override
-                        public void onAdFailedToLoad(int i) {
-                            if(BuildConfig.DEBUG){
-                                Log.w("little ad", "error : "+i);
+                        adview.loadAd(adRequest.build());
+                        adview.setAdListener(new AdListener() {
+                            @Override
+                            public void onAdClicked() {
+                                Toast.makeText(MainActivity.this, getString(R.string.bigadthank), Toast.LENGTH_LONG).show();
                             }
-                        }
-                    });
+
+                            @Override
+                            public void onAdFailedToLoad(int i) {
+                                if (BuildConfig.DEBUG) {
+                                    Log.w("little ad", "error : " + i);
+                                }
+                            }
+                        });
+                    } else {
+                        findViewById(R.id.button).setVisibility(View.GONE);
+                    }
                 }
             });
         }

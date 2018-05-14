@@ -6,8 +6,8 @@ android {
         applicationId "fr.jangberry.spamdeck"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 3
-        versionName "1.2"
+        versionCode 4
+        versionName "1.2.1"
         versionNameSuffix " - SushiSauvage"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
