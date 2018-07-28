@@ -26,7 +26,9 @@ public class AboutTab extends AppCompatActivity {
             Intent twitter = new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/jangberry_"));
             startActivity(twitter);
         } catch (Exception e) {
-            Log.e("inent", "", e);
+            if(BuildConfig.DEBUG) {
+                Log.e("inent", "", e);
+            }
         }
     }
 
@@ -35,7 +37,9 @@ public class AboutTab extends AppCompatActivity {
             Intent git = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/jangberry"));
             startActivity(git);
         } catch (Exception e) {
-            Log.e("inent", "", e);
+            if(BuildConfig.DEBUG) {
+                Log.e("inent", "", e);
+            }
         }
     }
 
@@ -44,7 +48,9 @@ public class AboutTab extends AppCompatActivity {
             Intent yt = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/channel/UCXFBCtoa3U3kQdtGj-qG8mg"));
             startActivity(yt);
         } catch (Exception e) {
-            Log.e("inent", "", e);
+            if(BuildConfig.DEBUG) {
+                Log.e("inent", "", e);
+            }
         }
     }
 
@@ -57,7 +63,9 @@ public class AboutTab extends AppCompatActivity {
                 ethaddr.setVisibility(View.GONE);
             }
         } catch (Exception e) {
-            Log.e("inent", "", e);
+            if(BuildConfig.DEBUG) {
+                Log.e("inent", "", e);
+            }
         }
     }
 

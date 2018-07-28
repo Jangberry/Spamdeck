@@ -1,10 +1,9 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">SpamDeck</string>
     <string name="connectionErrorHTML">Impossible connection</string>
     <string name="twitchUnjoinableHTML">Impossible to join the Twitch servers, check your connection and restart app</string>
     <string name="unmapped">Unmapped</string>
     <string name="connect">Connect</string>
-    <string name="save">Save</string>
     <string name="channelname">Name of the channel to join</string>
     <string name="name">Name</string>
     <string name="message">Message</string>
@@ -31,8 +30,8 @@
         my email address given on Github or on the Play store page of the app, before engage
         procedures, so I can fix this issue, I\'m a beginner with publishing apps or legal issues in
         general so it\'s certainly not perfect… sorry)</string>
-    <string name="bigadthank">Thank you, it helps me a bit on the road of the be£t mon€y wor£d</string>
-    <string name="adswitchon">Ads activated, thank you 😍</string>
-    <string name="adswitchoff">Ads hidden</string>
-    <string name="ads">Ads</string>
+    <string name="bigadthank" tools:ignore="UnusedResources">Thank you, it helps me a bit on the road of the be£t mon€y wor£d</string>
+    <string name="titlefirststart">Welcome to Spamdeck</string>
+    <string name="firststartexplainations">Hi,\nSpamdeck is an Android app that let you 40 customizable buttons for sending preset messages in a Twitch chat.\n\nFor doing that, this app will need access to your Twitch account, a Twitch page will let you grant to the app this access.\nDon\'t worry, this app don\'t saves anything (if you have a doubt, verify the code at Github), but Twitch will remember you.\n\nEnjoy, and don\'t spray hate on Twitch ;)</string>
+    <string name="chosechannel">Chose a channel</string>
 </resources>

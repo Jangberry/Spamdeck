@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Spamdeck.iml" filepath="$PROJECT_DIR$/Spamdeck.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file:///data/Matthieu/Documents/Repos/Spamdeck/Spamdeck.iml" filepath="/data/Matthieu/Documents/Repos/Spamdeck/Spamdeck.iml" />
+      <module fileurl="file:///data/Matthieu/Documents/Repos/Spamdeck/app/app.iml" filepath="/data/Matthieu/Documents/Repos/Spamdeck/app/app.iml" />
     </modules>
   </component>
 </project>

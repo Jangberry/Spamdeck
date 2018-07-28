@@ -24,22 +24,16 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.MobileAds;
-
 public class MainActivity extends AppCompatActivity {
-    protected static final String clientID = "6ndb4f2gou52g7zdmk32e89m4gk4iq";
+    static final String clientID = "6ndb4f2gou52g7zdmk32e89m4gk4iq";
     private static final String savedLayout_Location = "fr.jangberry.spamdeck.layout";
+    private static final String SharedPreferencesLocation = "fr.jangberry.spamdeck";
     private static final String apiScopes = "chat_login";
-    String channel;
-    String token;
-    boolean changingChannel = false;
-    boolean ads;
-    int buttonChangingId;
-    int currentView;    /*
+    private String channel;
+    private String token;
+    private boolean changingChannel = false;
+    private int buttonChangingId;
+    private int currentView;    /*
                         0 = login (webview)
                         1 = choosing channel
                         2 = buttons view
@@ -47,11 +41,9 @@ public class MainActivity extends AppCompatActivity {
                         */
     private SharedPreferences savedLayout;
     private SocketService socketservice;
-    private InterstitialAd bigad;
-    private AdView adview;
     private SharedPreferences sharedPreferences;
 
-    protected ServiceConnection serviceconnection = new ServiceConnection() {
+    protected final ServiceConnection serviceconnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -87,27 +79,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    Boolean checkLogged() {
+    private Boolean checkLogged() {
         return socketservice.logged;
     }
 
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (currentView == 0) {                                      //0 = login (webview)
-                finish();
-            } else if (currentView == 1) {                               //1 = choosing channel
-                finish();
-            } else if (currentView == 2) {                               //2 = buttons view
-                setContentView(R.layout.activity_main_chosechannel);
-                currentView = 1;
-                Toolbar toolbar = findViewById(R.id.toolbar_main);
-                setSupportActionBar(toolbar);
-                setTitle(R.string.chosenewchannel);
-                changingChannel = true;
-            } else if (currentView == 3) {                               //3 = editing button view
-                findViewById(R.id.buttons).setVisibility(View.VISIBLE);
-                findViewById(R.id.buttonsmodifier).setVisibility(View.GONE);
-                currentView = 2;
+            switch (currentView) {
+                case 0:                                       //0 = login (webview)
+                    finish();
+                    break;
+                case 1:                                //1 = choosing channel
+                    finish();
+                    break;
+                case 2:                                //2 = buttons view
+                    setContentView(R.layout.activity_main_chosechannel);
+                    currentView = 1;
+                    Toolbar toolbar = findViewById(R.id.toolbar_channel);
+                    setSupportActionBar(toolbar);
+                    setTitle(R.string.chosenewchannel);
+                    TextView channelfield = findViewById(R.id.channelField);
+                    channelfield.setText(sharedPreferences.getString("Channel", null));
+                    changingChannel = true;
+                    break;
+                case 3:                                //3 = editing button view
+                    findViewById(R.id.buttons).setVisibility(View.VISIBLE);
+                    findViewById(R.id.buttonsmodifier).setVisibility(View.GONE);
+                    currentView = 2;
+                    break;
             }
             return true;
         }
@@ -122,9 +121,27 @@ public class MainActivity extends AppCompatActivity {
                 serviceconnection,
                 Context.BIND_AUTO_CREATE);
         savedLayout = this.getSharedPreferences(savedLayout_Location, MODE_PRIVATE);
-        sharedPreferences = this.getSharedPreferences("fr.jangberry.spamdeck", MODE_PRIVATE);
-        setContentView(R.layout.activity_main_login);
+        sharedPreferences = this.getSharedPreferences(SharedPreferencesLocation, MODE_PRIVATE);
         currentView = 0;
+
+        if(sharedPreferences.getBoolean("firststart", true)){
+            setContentView(R.layout.activity_main_firststart);
+            Toolbar toolbar = findViewById(R.id.toolbar_firststart);
+            setSupportActionBar(toolbar);
+            setTitle(R.string.titlefirststart);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("firststart", false);
+            editor.apply();
+        }
+        else {
+            loadWebView(null);
+        }
+    }
+
+    public void loadWebView(View view){
+        setContentView(R.layout.activity_main_login);
+        Toolbar toolbar = findViewById(R.id.toolbar_login);
+        setSupportActionBar(toolbar);
         setTitle(R.string.app_name);
         String uri = "https://id.twitch.tv/oauth2/authorize" +
                 "?client_id=" + clientID +
@@ -138,20 +155,26 @@ public class MainActivity extends AppCompatActivity {
         webview.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                //Log.v("URL", url);                         // Commented because of security issues
+                if(BuildConfig.DEBUG) {
+                    Log.v("URL", url);
+                }
                 if (url.contains("localhost/#")) {
-                    Log.i("TwitchLogin",
-                            "Logged, recovering Token, connecting to chat and setting up button view...");
+                    if(BuildConfig.DEBUG) {
+                        Log.d("TwitchLogin",
+                                "Logged, recovering Token, connecting to chat and setting up button view...");
+                    }
                     token = url.substring(url.indexOf("=") + 1, url.indexOf("&"));
-                    //Log.v("Token", token);                 // Commented because of security issues
+                    if(BuildConfig.DEBUG) {
+                        Log.v("Token", token);
+                    }
                     setContentView(R.layout.activity_main_chosechannel);
                     currentView = 1;
                     Toolbar toolbar = findViewById(R.id.toolbar_channel);
                     setSupportActionBar(toolbar);
-                    setTitle(R.string.app_name);
+                    setTitle(R.string.chosechannel);
+                    TextView channelfield = findViewById(R.id.channelField);
+                    channelfield.setText(sharedPreferences.getString("Channel", null));
                     socketservice.socketConnect(token);
-                    Switch switchads = findViewById(R.id.switchads);
-                    switchads.setChecked(sharedPreferences.getBoolean("ads", false));
                 }
                 super.onPageFinished(view, url);
             }
@@ -166,6 +189,8 @@ public class MainActivity extends AppCompatActivity {
                                     getString(R.string.connectionErrorHTML) +
                                     "</h1>" +
                                     getString(R.string.twitchUnjoinableHTML) +
+                                    "<br>" +
+                                    description +
                                     "</body>" +
                                     "</html>";
                     view.loadUrl("about:blank");
@@ -175,73 +200,48 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        MobileAds.initialize(MainActivity.this, "ca-app-pub-5985669867488339~2706804686");
-        bigad = new InterstitialAd(this);
-        bigad.setAdUnitId("ca-app-pub-5985669867488339/1908728330");
-        AdRequest.Builder bigadrequest = new AdRequest.Builder();
-        if (BuildConfig.DEBUG) {
-            bigadrequest.addTestDevice("3D0266CF596BA090B74E9D85DE74822E");
-            Log.i("Debug", "Screening ad");
-        }
-        bigad.loadAd(bigadrequest.build());
-        bigad.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                AdRequest.Builder bigadrequest = new AdRequest.Builder();
-                if (BuildConfig.DEBUG) {
-                    bigadrequest.addTestDevice("3D0266CF596BA090B74E9D85DE74822E");
-                    Log.i("Debug", "Screening ad");
-                }
-                bigad.loadAd(bigadrequest.build());
-            }
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                if(BuildConfig.DEBUG){
-                    Log.i("Big ad", "failed loading error code:"+errorCode);
-                }
-            }
-            @Override
-            public void onAdOpened() {
-                Toast.makeText(MainActivity.this, getString(R.string.bigadthank), Toast.LENGTH_LONG).show();
-                if(BuildConfig.DEBUG){
-                    Log.i("Big ad", "opened");
-                }
-            }
-            @Override
-            public void onAdLoaded() {
-                if(BuildConfig.DEBUG){
-                    Log.i("Big ad", "loaded");
-                }
-            }
-        });
     }
 
     public void onChannelChosen(View view) {
         EditText channelField = findViewById(R.id.channelField);
         channel = channelField.getText().toString();
+        if(BuildConfig.DEBUG) {
+            Log.v("Channel get", channel);
+        }
+        channel = channel.replace(" ","");
+        if(BuildConfig.DEBUG) {
+            Log.v("Channel without spaces", channel);
+        }
+        channel = channel.toLowerCase();
+        if(BuildConfig.DEBUG) {
+            Log.d("Channel set", channel);
+        }
         if (!channel.equals("")) {
             if (!changingChannel) {
                 socketservice.setChannel(channel);
                 findViewById(R.id.channelloading).setVisibility(View.VISIBLE);
-                findViewById(R.id.channeltexture).setVisibility(View.VISIBLE);
                 new ChangeViewChecker().start();
             } else {
                 socketservice.newChannel(channel);
                 findViewById(R.id.channelloading).setVisibility(View.VISIBLE);
-                findViewById(R.id.channeltexture).setVisibility(View.VISIBLE);
                 new ChangeViewChecker().start();
                 changingChannel = false;
             }
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("Channel", channel);
+            editor.apply();
         } else {
             findViewById(R.id.textviewchannelnamerror).setVisibility(View.VISIBLE);
         }
     }
 
     public void onButtonClick(View view) {
-        Log.v("Main",
-                "Button" + view.getId() +
-                        " with command " + view.getContentDescription().toString() +
-                        " short pressed");
+        if(BuildConfig.DEBUG) {
+            Log.v("Main",
+                    "Button" + view.getId() +
+                            " with command " + view.getContentDescription().toString() +
+                            " short pressed");
+        }
         if (!view.getContentDescription().toString()
                 .substring(0, view.getContentDescription().toString().lastIndexOf("/"))
                 .equals("")) {
@@ -249,15 +249,21 @@ public class MainActivity extends AppCompatActivity {
             socketservice.send(temp.substring(0, temp.lastIndexOf("/")),
                     temp.substring(temp.lastIndexOf("/")+1).equals("1"));
         } else {
-            Log.d("Main", "Button unmapped");
+            if(BuildConfig.DEBUG) {
+                Log.d("Main", "Button unmapped");
+            }
+            Toast.makeText(this, R.string.unmapped, Toast.LENGTH_SHORT).show();
         }
     }
 
     public Boolean onButtonLongClick(View view) {
-        Log.v("Main",
-                "Button" + view.getId() +
-                        " with command " + view.getContentDescription().toString() +
-                        " long pressed");
+        if(BuildConfig.DEBUG) {
+            Log.v("Main",
+                    "Button" + view.getId() +
+                            " with command " + view.getContentDescription().toString() +
+                            " long pressed");
+        }
+        findViewById(R.id.buttons).setVisibility(View.GONE);
         findViewById(R.id.buttonsmodifier).setVisibility(View.VISIBLE);
         currentView = 3;
         TextView name = findViewById(R.id.text_newcommandname);
@@ -271,12 +277,14 @@ public class MainActivity extends AppCompatActivity {
                 old.getContentDescription().toString().substring(
                         old.getContentDescription().toString().lastIndexOf("/") + 1).equals("1"));
         buttonChangingId = view.getId();
-        findViewById(R.id.buttons).setVisibility(View.GONE);
         return true;
     }
 
     public void onButtonSaveChanges(View view) {
-        Log.v("ChangingButton", "Saving changes for button" + buttonChangingId);
+        if(BuildConfig.DEBUG) {
+            Log.d("ChangingButton", "Saving changes for button" + buttonChangingId);
+        }
+        findViewById(R.id.buttonsmodifier).setVisibility(View.GONE);
         findViewById(R.id.buttons).setVisibility(View.VISIBLE);
         currentView = 2;
         TextView buttonToChange = findViewById(buttonChangingId);
@@ -298,7 +306,6 @@ public class MainActivity extends AppCompatActivity {
             editor.putString("Command" + buttonChangingId, newContent.toString());
             editor.apply();
         }
-        findViewById(R.id.buttonsmodifier).setVisibility(View.GONE);
 
     }
 
@@ -310,16 +317,13 @@ public class MainActivity extends AppCompatActivity {
     class ChangeViewChecker extends Thread {
         @Override
         public void run() {
-            Switch switchads = findViewById(R.id.switchads);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("ads", switchads.isChecked());
-            editor.apply();
-            ads = switchads.isChecked();
             while (!checkLogged()) {
                 try {
                     sleep(100);
                 } catch (Exception e) {
-                    Log.v("Waiting process", "interrupted", e);
+                    if(BuildConfig.DEBUG) {
+                        Log.i("Waiting process", "interrupted", e);
+                    }
                 }
             }
             new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -348,60 +352,25 @@ public class MainActivity extends AppCompatActivity {
                                     "Text" + currentButton.getId(), getString(R.string.unmapped)));
                             currentButton.setContentDescription(savedLayout.getString(
                                     "Command" + currentButton.getId(), "/0"));
-                            /*Log.v("Main",
-                                    "Both listeners has been set, " +
-                                            "and button is now " + currentButton.getText() +
-                                            " with command " + currentButton.getContentDescription());
-                        */                              //Commented because of the spam created with
+                            if(BuildConfig.DEBUG) {
+                                Log.v("Main",
+                                        "Both listeners has been set, " +
+                                                "and button is now " + currentButton.getText() +
+                                                " with command " + currentButton.getContentDescription());
+                            }
                         } catch (NullPointerException e) {
                             end = true;
-                            Log.v("ButtonView", "All listeners has been set, " +
-                                    "and all buttons are restored");
+                            if(BuildConfig.DEBUG) {
+                                Log.d("ButtonView", "All listeners has been set, " +
+                                        "and all buttons are restored");
+                            }
                         }
                     }
                     Toolbar toolbar = findViewById(R.id.toolbar_main);
                     setSupportActionBar(toolbar);
-                    setTitle(R.string.app_name);
-                    if (ads) {
-                        adview = findViewById(R.id.adView);
-                        AdRequest.Builder adRequest = new AdRequest.Builder();
-                        if (BuildConfig.DEBUG) {
-                            adRequest.addTestDevice("3D0266CF596BA090B74E9D85DE74822E");
-                            Log.i("Debug", "Screening ad");
-                        }
-                        adview.loadAd(adRequest.build());
-                        adview.setAdListener(new AdListener() {
-                            @Override
-                            public void onAdClicked() {
-                                Toast.makeText(MainActivity.this, getString(R.string.bigadthank), Toast.LENGTH_LONG).show();
-                            }
-
-                            @Override
-                            public void onAdFailedToLoad(int i) {
-                                if (BuildConfig.DEBUG) {
-                                    Log.w("little ad", "error : " + i);
-                                }
-                            }
-                        });
-                    } else {
-                        findViewById(R.id.button).setVisibility(View.GONE);
-                    }
+                    setTitle(channel);
                 }
             });
-        }
-    }
-
-    public void onBigAdShow(View view) {
-         if (bigad.isLoaded()) {
-            bigad.show();
-        } else {
-            Log.d("TAG", "The interstitial wasn't loaded yet.");
-            AdRequest.Builder bigadrequest = new AdRequest.Builder();
-             if (BuildConfig.DEBUG) {
-                 bigadrequest.addTestDevice("3D0266CF596BA090B74E9D85DE74822E");
-                 Log.i("Debug", "Screening ad");
-             }
-             bigad.loadAd(bigadrequest.build());
         }
     }
 }

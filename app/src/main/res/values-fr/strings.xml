@@ -5,7 +5,6 @@
     <string name="twitchUnjoinableHTML">Impossible de joindre les serveurs de Twitch, verrifiez votre connexion et redemarrez l\'application</string>
     <string name="unmapped">Non-mappé</string>
     <string name="connect">Se connecter</string>
-    <string name="save">Sauvegarder</string>
     <string name="channelname">Nom de la chaine à laquelle se connecter</string>
     <string name="name">Nom</string>
     <string name="message">Message</string>
@@ -16,7 +15,7 @@
     <string name="About">A propos</string>
     <string name="title_activity_about_tab">Onlget à propos</string>
     <string name="SocialMedia">Medias sociaux</string>
-    <string name="chosenewchannel">Chose an other channel</string>
+    <string name="chosenewchannel">Choisissez une autre chaine</string>
     <string name="legal">Legal</string>
     <string name="legalcontent">Icones :\nmaterial.io\nwww.flaticon.com/authors/pixel-perfect\n\nLibrairies:\ngithub.com/studioidan/HttpAgent\n\nLicences:\nTous les icones/logos/marques
         appartiennent à leurs propriétaires respectifs, même s\'ils ne sont pas mentionnés en dessous\n
@@ -35,7 +34,7 @@
         probleme, je suis un débutant dans la publication d\'applications ou les problematiques
         légales en général, donc c\'est certainement pas parfait… désolé)\n</string>
     <string name="bigadthank">Merci, ça m\'aide sur la voie de £a rich€$$€</string>
-    <string name="adswitchon">Pubs affichés, merci 😍</string>
-    <string name="adswitchoff">Pubs cachés</string>
-    <string name="ads">Pubs</string>
+    <string name="titlefirststart">Bienvenue sur Spamdeck</string>
+    <string name="firststartexplainations">Salut,\nSpamdeck est une application qui vous laisse 40 boutons personnalisables pour envoyer des messages préréglés sur les chats Twitch.\n\nPour se faire, l\'application vas nécessiter un accès a votre compte Twitch, une page Twitch vous laissera donner cet accès à l\'application.\nNe prennez pas peur, cette application ne sauvegarde rien (si vous avez un doute, verrifiez le code sur Github), mais Twitch se soouviendra de vous.\n\nAmusez-vous, et ne répendez pas la haine sur Twitch ;)</string>
+    <string name="chosechannel">Choisissez une chaine</string>
 </resources>

@@ -10,7 +10,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/AppTheme.NoActionBar"
+        android:fullBackupContent="@xml/backup_descriptor">
         <activity
             android:name=".MainActivity"
             android:screenOrientation="sensorPortrait">
@@ -23,8 +24,7 @@
 
         <service
             android:name=".SocketService"
-            android:enabled="true"
-            android:exported="true" />
+            android:enabled="true"/>
 
         <activity
             android:name=".AboutTab"

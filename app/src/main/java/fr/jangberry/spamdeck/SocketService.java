@@ -23,22 +23,22 @@ import java.util.ArrayList;
 public class SocketService extends Service {
     private final IBinder mBinder = new LocalBinder();
     public Boolean logged = false;
-    Socket socket = new Socket();
-    BufferedReader in;
-    PrintWriter out;
+    private Socket socket = new Socket();
+    private BufferedReader in;
+    private PrintWriter out;
     String username;
     String channel;
-    Boolean spam = false;
-    ArrayList sendQueue = new ArrayList();
+    private Boolean spam = false;
+    private final ArrayList sendQueue = new ArrayList();
 
     public SocketService() {
     }
 
-    protected void setChannel(String incoming) {
+    void setChannel(String incoming) {
         channel = incoming;
     }
 
-    protected void setUsername(String incoming) {
+    private void setUsername(String incoming) {
         username = incoming;
     }
 
@@ -67,21 +67,23 @@ public class SocketService extends Service {
                     } else {
                         sleep(50);
                     }
-                } catch (InterruptedException e) {}
+                } catch (InterruptedException ignored) {}
             }
         }
     }
 
-    void onRecv(String message) {
+    private void onRecv(String message) {
         //Log.v("MSG recu", message);                   //Commented because of the spam created with
-        Log.v("MSG formatted", message.substring(1, message.indexOf("!")) + message.substring(message.indexOf(":", 1)));
-        /*                                  _________/  _________________/                                            __/
-                                           |           |                                                             |
-        Typical twitch incoming message    :nrandolph99!nrandolph99@nrandolph99.tmi.twitch.tv PRIVMSG #katjawastaken :yeah
-        where:                                  /\          /\          /\                                  /\          /\
-                                            Both of them are the sender's name                              ||     And this is the message (can be any length)
+        if(BuildConfig.DEBUG) {
+            Log.v("MSG formatted", message.substring(1, message.indexOf("!")) + message.substring(message.indexOf(":", 1)));
+        }
+            /*                                  _________/  _________________/                                            __/
+                                               |           |                                                             |
+            Typical twitch incoming message    :nrandolph99!nrandolph99@nrandolph99.tmi.twitch.tv PRIVMSG #katjawastaken :yeah
+            where:                                  /\          /\          /\                                  /\          /\
+                                                Both of them are the sender's name                              ||     And this is the message (can be any length)
                                                                                                     This is channel name
-         */
+            */
     }
 
     public void socketConnect(String token) {
@@ -92,11 +94,17 @@ public class SocketService extends Service {
         super.onDestroy();
         try {
             socket.close();
-            Log.i("SocketService", "Socket closed");
+            if(BuildConfig.DEBUG) {
+                Log.i("SocketService", "Socket closed");
+            }
         } catch (IOException e) {
-            Log.e("e", "IO", e);
+            if(BuildConfig.DEBUG) {
+                Log.e("e", "IO", e);
+            }
         } catch (NullPointerException e) {
-            Log.i("SocketService", "Socket not opened");
+            if(BuildConfig.DEBUG) {
+                Log.i("SocketService", "Socket not opened");
+            }
         }
 
     }
@@ -113,13 +121,15 @@ public class SocketService extends Service {
          *
          *   new SendThread(String).start();
          */
-        String message;
+        final String message;
         SendThread(String message) {
             this.message = message;
         }
         public void run() {
             out.println(message);
-            Log.v("SendThread", "Sent>" + message);
+            if(BuildConfig.DEBUG) {
+                Log.v("SendThread", "Sent>" + message);
+            }
         }
     }
 
@@ -147,20 +157,30 @@ public class SocketService extends Service {
                                 onRecv(recv);
                             } else if (recv.substring(0, 4).equals("PING")) {
                                 new SendThread("PONG").start();
-                                Log.d("RecvThread", "PING-PONG");
+                                if(BuildConfig.DEBUG) {
+                                    Log.d("RecvThread", "PING-PONG");
+                                }
                             } else {
-                                Log.i("MSG", recv);
+                                if(BuildConfig.DEBUG) {
+                                    Log.i("MSG", recv);
+                                }
                             }
-                        } catch (StringIndexOutOfBoundsException e) {
+                        } catch (StringIndexOutOfBoundsException ignored) {
                         }
                     }
                 } catch (java.net.SocketException e) {
                     keepReceiving = false;
-                    Log.e("RecvThread", "Error", e);
+                    if(BuildConfig.DEBUG) {
+                        Log.e("RecvThread", "Error", e);
+                    }
                 } catch (java.io.IOException e) {
-                    Log.e("RecvThread", "Error", e);
+                    if(BuildConfig.DEBUG) {
+                        Log.e("RecvThread", "Error", e);
+                    }
                 } catch (java.lang.InterruptedException e) {
-                    Log.wtf("Receving", "Thread", e);
+                    if(BuildConfig.DEBUG) {
+                        Log.wtf("Receving", "Thread", e);
+                    }
                 }
             }
         }
@@ -171,8 +191,8 @@ public class SocketService extends Service {
         new NewChannel(channel).start();
     }
 
-    public class NewChannel extends Thread {
-        String newChannel;
+    class NewChannel extends Thread {
+        final String newChannel;
 
         NewChannel(String newChannel) {
             this.newChannel = newChannel;
@@ -203,15 +223,17 @@ public class SocketService extends Service {
                     if (!socket.isConnected()) {
                         SocketAddress socaddrs = new InetSocketAddress(
                                 "irc.chat.twitch.tv", 6667);
-                        Log.i("SocketService", "Trying to connect");
+                        if(BuildConfig.DEBUG) {
+                            Log.d("SocketService", "Trying to connect");
+                        }
                         socket.connect(socaddrs, 5000);
                         if (socket.isConnected()) {
                             out = new PrintWriter(socket.getOutputStream(), true);
                             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                            Log.i("SocketService", "Socket connected");
+                            if(BuildConfig.DEBUG) {
+                                Log.d("SocketService", "Socket connected");
+                            }
                             new RecvThread().start();
-                            out.println("PASS oauth:" + token);
-
                             String url = "https://api.twitch.tv/kraken";
                             HttpAgent.get(url)
                                     .headers("client-id", MainActivity.clientID,
@@ -221,23 +243,30 @@ public class SocketService extends Service {
                                         @Override
                                         protected void onDone(boolean success, JSONObject jsonResults) {
                                             if (success) {
-                                                //Log.v("HTTP", "Success :" + jsonResults.toString());  // Commented because of security issues
+                                                if(BuildConfig.DEBUG) {
+                                                    Log.v("HTTP", "Success :" + jsonResults.toString());
+                                                }
                                                 try {
                                                     setUsername(jsonResults.getJSONObject("token")
                                                             .get("user_name")
                                                             .toString());
-                                                } catch (org.json.JSONException e) {}
+                                                } catch (org.json.JSONException ignored) {}
                                             } else {
-                                                Log.e("HTTP", "error");
+                                                if(BuildConfig.DEBUG) {
+                                                    Log.e("HTTP", "error");
+                                                }
                                             }
                                         }
                                     });
+                            out.println("PASS oauth:" + token);
                             while (username == null) {
                                 sleep(10);
                             }
                             out.println("NICK " + username);
-                            Log.v("SocketService", "Username get ! It's " +
-                                    username + " and you're now logged with");
+                            if(BuildConfig.DEBUG) {
+                                Log.v("SocketService", "Username get ! It's " +
+                                        username + " and you're now logged with");
+                            }
                         }
                     }
                     while (channel == null) {
@@ -245,18 +274,26 @@ public class SocketService extends Service {
                     }
                     out.println("JOIN #" + channel);
                     logged = true;
-                    Log.i("SocketService",
-                            "Now logged with username " + username +
-                                    " to channel " + channel);
+                    if(BuildConfig.DEBUG) {
+                        Log.i("SocketService",
+                                "Now logged with username " + username +
+                                        " to channel " + channel);
+                    }
                     new SendQueueTreatment().start();
 
                 } catch (IOException e) {
-                    Log.e("e", "IOErreur", e);
+                    if(BuildConfig.DEBUG) {
+                        Log.e("e", "IOErreur", e);
+                    }
                 } catch (Exception e) {
-                    Log.e("Socket service", "", e);
+                    if(BuildConfig.DEBUG) {
+                        Log.e("Socket service", "", e);
+                    }
                 }
             } else {
-                Log.d("SocketService", "Already logged");
+                if(BuildConfig.DEBUG) {
+                    Log.d("SocketService", "Already logged");
+                }
                 logged = true;
             }
         }
