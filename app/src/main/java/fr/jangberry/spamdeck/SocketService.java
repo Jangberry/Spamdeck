@@ -210,7 +210,7 @@ public class SocketService extends Service {
     }
 
     class ConnectThread extends Thread {
-        String token;
+        final String token;
 
         ConnectThread(String token) {
             this.token = token;
@@ -294,7 +294,6 @@ public class SocketService extends Service {
                 if(BuildConfig.DEBUG) {
                     Log.d("SocketService", "Already logged");
                 }
-                logged = true;
             }
         }
     }

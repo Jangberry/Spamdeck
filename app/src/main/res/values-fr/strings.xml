@@ -37,4 +37,5 @@
     <string name="titlefirststart">Bienvenue sur Spamdeck</string>
     <string name="firststartexplainations">Salut,\nSpamdeck est une application qui vous laisse 40 boutons personnalisables pour envoyer des messages préréglés sur les chats Twitch.\n\nPour se faire, l\'application vas nécessiter un accès a votre compte Twitch, une page Twitch vous laissera donner cet accès à l\'application.\nNe prennez pas peur, cette application ne sauvegarde rien (si vous avez un doute, verrifiez le code sur Github), mais Twitch se soouviendra de vous.\n\nAmusez-vous, et ne répendez pas la haine sur Twitch ;)</string>
     <string name="chosechannel">Choisissez une chaine</string>
+    <string name="recentchannels">Chaines recentes</string>
 </resources>

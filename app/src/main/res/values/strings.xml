@@ -34,4 +34,5 @@
     <string name="titlefirststart">Welcome to Spamdeck</string>
     <string name="firststartexplainations">Hi,\nSpamdeck is an Android app that let you 40 customizable buttons for sending preset messages in a Twitch chat.\n\nFor doing that, this app will need access to your Twitch account, a Twitch page will let you grant to the app this access.\nDon\'t worry, this app don\'t saves anything (if you have a doubt, verify the code at Github), but Twitch will remember you.\n\nEnjoy, and don\'t spray hate on Twitch ;)</string>
     <string name="chosechannel">Chose a channel</string>
+    <string name="recentchannels">Recent channels</string>
 </resources>

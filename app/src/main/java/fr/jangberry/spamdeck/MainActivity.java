@@ -19,7 +19,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private SocketService socketservice;
     private SharedPreferences sharedPreferences;
 
-    protected final ServiceConnection serviceconnection = new ServiceConnection() {
+    private final ServiceConnection serviceconnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -101,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
                     TextView channelfield = findViewById(R.id.channelField);
                     channelfield.setText(sharedPreferences.getString("Channel", null));
                     changingChannel = true;
+                    resetRecentsChannels();
                     break;
                 case 3:                                //3 = editing button view
                     findViewById(R.id.buttons).setVisibility(View.VISIBLE);
@@ -124,21 +127,17 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = this.getSharedPreferences(SharedPreferencesLocation, MODE_PRIVATE);
         currentView = 0;
 
-        if(sharedPreferences.getBoolean("firststart", true)){
+        if (sharedPreferences.getBoolean("firststart", true)) {
             setContentView(R.layout.activity_main_firststart);
             Toolbar toolbar = findViewById(R.id.toolbar_firststart);
             setSupportActionBar(toolbar);
             setTitle(R.string.titlefirststart);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("firststart", false);
-            editor.apply();
-        }
-        else {
+        } else {
             loadWebView(null);
         }
     }
 
-    public void loadWebView(View view){
+    public void loadWebView(View view) {
         setContentView(R.layout.activity_main_login);
         Toolbar toolbar = findViewById(R.id.toolbar_login);
         setSupportActionBar(toolbar);
@@ -155,16 +154,16 @@ public class MainActivity extends AppCompatActivity {
         webview.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                if(BuildConfig.DEBUG) {
+                if (BuildConfig.DEBUG) {
                     Log.v("URL", url);
                 }
                 if (url.contains("localhost/#")) {
-                    if(BuildConfig.DEBUG) {
+                    if (BuildConfig.DEBUG) {
                         Log.d("TwitchLogin",
                                 "Logged, recovering Token, connecting to chat and setting up button view...");
                     }
                     token = url.substring(url.indexOf("=") + 1, url.indexOf("&"));
-                    if(BuildConfig.DEBUG) {
+                    if (BuildConfig.DEBUG) {
                         Log.v("Token", token);
                     }
                     setContentView(R.layout.activity_main_chosechannel);
@@ -175,6 +174,8 @@ public class MainActivity extends AppCompatActivity {
                     TextView channelfield = findViewById(R.id.channelField);
                     channelfield.setText(sharedPreferences.getString("Channel", null));
                     socketservice.socketConnect(token);
+                    resetRecentsChannels();
+                    new ChangeViewChecker(true).start();
                 }
                 super.onPageFinished(view, url);
             }
@@ -200,31 +201,34 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        if (null != view) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("firststart", false);
+            editor.apply();
+        }
     }
 
     public void onChannelChosen(View view) {
         EditText channelField = findViewById(R.id.channelField);
         channel = channelField.getText().toString();
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             Log.v("Channel get", channel);
         }
-        channel = channel.replace(" ","");
-        if(BuildConfig.DEBUG) {
+        channel = channel.replace(" ", "");
+        if (BuildConfig.DEBUG) {
             Log.v("Channel without spaces", channel);
         }
         channel = channel.toLowerCase();
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             Log.d("Channel set", channel);
         }
         if (!channel.equals("")) {
             if (!changingChannel) {
                 socketservice.setChannel(channel);
-                findViewById(R.id.channelloading).setVisibility(View.VISIBLE);
-                new ChangeViewChecker().start();
+                new ChangeViewChecker(false).start();
             } else {
                 socketservice.newChannel(channel);
-                findViewById(R.id.channelloading).setVisibility(View.VISIBLE);
-                new ChangeViewChecker().start();
+                new ChangeViewChecker(false).start();
                 changingChannel = false;
             }
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -236,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onButtonClick(View view) {
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             Log.v("Main",
                     "Button" + view.getId() +
                             " with command " + view.getContentDescription().toString() +
@@ -247,9 +251,9 @@ public class MainActivity extends AppCompatActivity {
                 .equals("")) {
             String temp = view.getContentDescription().toString();
             socketservice.send(temp.substring(0, temp.lastIndexOf("/")),
-                    temp.substring(temp.lastIndexOf("/")+1).equals("1"));
+                    temp.substring(temp.lastIndexOf("/") + 1).equals("1"));
         } else {
-            if(BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG) {
                 Log.d("Main", "Button unmapped");
             }
             Toast.makeText(this, R.string.unmapped, Toast.LENGTH_SHORT).show();
@@ -257,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public Boolean onButtonLongClick(View view) {
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             Log.v("Main",
                     "Button" + view.getId() +
                             " with command " + view.getContentDescription().toString() +
@@ -281,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onButtonSaveChanges(View view) {
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             Log.d("ChangingButton", "Saving changes for button" + buttonChangingId);
         }
         findViewById(R.id.buttonsmodifier).setVisibility(View.GONE);
@@ -297,9 +301,9 @@ public class MainActivity extends AppCompatActivity {
             buttonToChange.setText(newText);
             editor.putString("Text" + buttonChangingId, newText.toString());
             CharSequence newContent;
-            if(newSpam.isChecked()){
+            if (newSpam.isChecked()) {
                 newContent = newCommand.getText() + "/1";
-            }else{
+            } else {
                 newContent = newCommand.getText() + "/0";
             }
             buttonToChange.setContentDescription(newContent);
@@ -314,63 +318,122 @@ public class MainActivity extends AppCompatActivity {
         unbindService(serviceconnection);
     }
 
+    private void resetRecentsChannels() {
+        final TextView channelField = findViewById(R.id.channelField);
+        for (int i = 5; i >= 0; i--) {
+            if (sharedPreferences.getString("RecentChannel" + i, null) != null) {
+                Button button = new Button(this);
+                final String name = sharedPreferences.getString("RecentChannel" + i, null);
+                button.setText(name);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        channelField.setText(name);
+                    }
+                });
+                if (BuildConfig.DEBUG) {
+                    Log.v("Reset Recents Channels", "Added " + name + " channel");
+                }
+                LinearLayout container = findViewById(R.id.lastchannelscontainer);
+                container.addView(button);
+            }
+            if (BuildConfig.DEBUG) {
+                Log.v("loaded", "" + i + sharedPreferences.getString("RecentChannel" + (i), null));
+            }
+        }
+    }
+
     class ChangeViewChecker extends Thread {
+        boolean oneTime = false;
+
+        ChangeViewChecker(boolean oneTime) {
+            if (oneTime) {
+                this.oneTime = true;
+            }
+        }
+
         @Override
         public void run() {
-            while (!checkLogged()) {
-                try {
-                    sleep(100);
-                } catch (Exception e) {
-                    if(BuildConfig.DEBUG) {
-                        Log.i("Waiting process", "interrupted", e);
+            if (channel != null && !channel.equals("")) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                int j;
+                for (j = 0; j < 5; j++) {
+                    if (sharedPreferences.getString("RecentChannel" + (j + 1), null) != null) {
+                        if (!sharedPreferences.getString("RecentChannel" + 5, "").equals(channel)) {
+                            if (BuildConfig.DEBUG) {
+                                Log.v("saves", "" + j + sharedPreferences.getString("RecentChannel" + (j + 1), null));
+                            }
+                            editor.putString("RecentChannel" + j, sharedPreferences.getString("RecentChannel" + (j + 1), null));
+                        }
+                    }
+                    if (BuildConfig.DEBUG) {
+                        Log.v("a", "" + j + sharedPreferences.getString("RecentChannel" + (j), null));
+                    }
+                }
+                if (BuildConfig.DEBUG) {
+                    Log.v("last", "" + j);
+                }
+                editor.putString("RecentChannel" + j, channel);
+                editor.apply();
+            }
+            if (!oneTime) {
+                while (!checkLogged()) {
+                    try {
+                        sleep(100);
+                    } catch (Exception e) {
+                        if (BuildConfig.DEBUG) {
+                            Log.i("Waiting process", "interrupted", e);
+                        }
                     }
                 }
             }
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    setContentView(R.layout.activity_main);
-                    currentView = 2;
-                    int i;
-                    Boolean end = false;
-                    for (i = 0; !end; i++) {
-                        try {
-                            TextView currentButton = findViewById(R.id.button0 + i);
-                            currentButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    onButtonClick(view);
+            if (checkLogged()) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        setContentView(R.layout.activity_main);
+                        currentView = 2;
+                        int i;
+                        Boolean end = false;
+                        for (i = 0; !end; i++) {
+                            try {
+                                TextView currentButton = findViewById(R.id.button0 + i);
+                                currentButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        onButtonClick(view);
+                                    }
+                                });
+                                currentButton.setOnLongClickListener(new View.OnLongClickListener() {
+                                    @Override
+                                    public boolean onLongClick(View view) {
+                                        return onButtonLongClick(view);
+                                    }
+                                });
+                                currentButton.setText(savedLayout.getString(
+                                        "Text" + currentButton.getId(), getString(R.string.unmapped)));
+                                currentButton.setContentDescription(savedLayout.getString(
+                                        "Command" + currentButton.getId(), "/0"));
+                                if (BuildConfig.DEBUG) {
+                                    Log.v("Main",
+                                            "Both listeners has been set, " +
+                                                    "and button is now " + currentButton.getText() +
+                                                    " with command " + currentButton.getContentDescription());
                                 }
-                            });
-                            currentButton.setOnLongClickListener(new View.OnLongClickListener() {
-                                @Override
-                                public boolean onLongClick(View view) {
-                                    return onButtonLongClick(view);
+                            } catch (NullPointerException e) {
+                                end = true;
+                                if (BuildConfig.DEBUG) {
+                                    Log.d("ButtonView", "All listeners has been set, " +
+                                            "and all buttons are restored");
                                 }
-                            });
-                            currentButton.setText(savedLayout.getString(
-                                    "Text" + currentButton.getId(), getString(R.string.unmapped)));
-                            currentButton.setContentDescription(savedLayout.getString(
-                                    "Command" + currentButton.getId(), "/0"));
-                            if(BuildConfig.DEBUG) {
-                                Log.v("Main",
-                                        "Both listeners has been set, " +
-                                                "and button is now " + currentButton.getText() +
-                                                " with command " + currentButton.getContentDescription());
-                            }
-                        } catch (NullPointerException e) {
-                            end = true;
-                            if(BuildConfig.DEBUG) {
-                                Log.d("ButtonView", "All listeners has been set, " +
-                                        "and all buttons are restored");
                             }
                         }
+                        Toolbar toolbar = findViewById(R.id.toolbar_main);
+                        setSupportActionBar(toolbar);
+                        setTitle(socketservice.channel);
                     }
-                    Toolbar toolbar = findViewById(R.id.toolbar_main);
-                    setSupportActionBar(toolbar);
-                    setTitle(channel);
-                }
-            });
+                });
+            }
         }
     }
 }

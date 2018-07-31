@@ -837,6 +837,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             app:layout_constraintBottom_toTopOf="@+id/text_newcommandname"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -847,6 +848,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/message"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             app:layout_constraintBottom_toTopOf="@+id/text_newcommandmessage"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -861,7 +863,7 @@
             android:textAlignment="textEnd"
             android:textAllCaps="false"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_newcommandmessage" />
 
