@@ -10,6 +10,8 @@ I name the versions of the app form names of streamers that I like. I try to sor
 
 ## Change logs
 
+### From V1.3, See commits and/or realeases changelogs
+
 ### V1.2.1
 - fix autoscroll with ad (it became a bit more visible, so I'll put a switch to unactivate ad in next update ;) )
 
