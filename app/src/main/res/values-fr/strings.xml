@@ -38,4 +38,7 @@
     <string name="firststartexplainations">Salut,\nSpamdeck est une application qui vous laisse 40 boutons personnalisables pour envoyer des messages préréglés sur les chats Twitch.\n\nPour se faire, l\'application vas nécessiter un accès a votre compte Twitch, une page Twitch vous laissera donner cet accès à l\'application.\nNe prennez pas peur, cette application ne sauvegarde rien (si vous avez un doute, verrifiez le code sur Github), mais Twitch se soouviendra de vous.\n\nAmusez-vous, et ne répendez pas la haine sur Twitch ;)</string>
     <string name="chosechannel">Choisissez une chaine</string>
     <string name="recentchannels">Chaines recentes</string>
+    <string name="takealook">Vas regarder la page \"À propos\" pour voir comment utiliser l\'appli</string>
+    <string name="howtouseTitle">Comment utiliser l\'app</string>
+    <string name="howtouse">1. Choisissez la chaine à la-quelle vous voulez vous connecter\n2. Appuyez sur \"Se connecter\"\n3. Voici vos 40 boutons (par defaut, ils s\'appellent tous \"Non-mappé\" et n\'ont aucun message associé)\n4. Faites un click long sur le bouton quevous voulez modifier\n    Vous pouvez maintenant choisir le nom de ce bouton, le gentil message qu\'il devra envoyer a Twitch, et d\'activer ou non le mode spam\n5. Appuyez sur  \"ok\" pour sauvegarder\n6. Répétez 4. et 5. quand vous voulez pour modifier n\'importe quel bouton\n7. Vous n\'avez plus qu\'a cliquer, AMUSEZ-VOUS ! (mais ne spamez pas (et ne pensez pas au nom de l\'application))</string>
 </resources>

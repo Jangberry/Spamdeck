@@ -35,4 +35,7 @@
     <string name="firststartexplainations">Hi,\nSpamdeck is an Android app that let you 40 customizable buttons for sending preset messages in a Twitch chat.\n\nFor doing that, this app will need access to your Twitch account, a Twitch page will let you grant to the app this access.\nDon\'t worry, this app don\'t saves anything (if you have a doubt, verify the code at Github), but Twitch will remember you.\n\nEnjoy, and don\'t spray hate on Twitch ;)</string>
     <string name="chosechannel">Chose a channel</string>
     <string name="recentchannels">Recent channels</string>
+    <string name="takealook">Take a look to the \"About\" tab to see how to use this app</string>
+    <string name="howtouseTitle">How to use</string>
+    <string name="howtouse">1. Chose the channel you want to connect to\n2. Tap on \"Connect\"\n3. Here you have your 40 buttons (by defalut, all of them are named \"Unmapped\" and hasn\'t any message associated)\n4. Long click on any button you want to modify\n    Here you can set the button\'s name, the friendly message it would send to Twitch, and set the spam mode on or off\n5. Click \"ok\" to save\n6. Repeat 4. and 5. any time on any button to modify it \n7. You now just have to click, ENJOY ! (but don\'t spam (and don\'t think about the app\'s name))</string>
 </resources>
